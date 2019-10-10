@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4BF08313234F574200FED418 /* TStickerGestureDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BF08311234F574200FED418 /* TStickerGestureDelegate.m */; };
 		A9C8D03A232B26ED0089971E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C8D039232B26ED0089971E /* AppDelegate.m */; };
 		A9C8D03D232B26ED0089971E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C8D03C232B26ED0089971E /* ViewController.m */; };
 		A9C8D040232B26ED0089971E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9C8D03E232B26ED0089971E /* Main.storyboard */; };
@@ -25,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4BF08311234F574200FED418 /* TStickerGestureDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TStickerGestureDelegate.m; sourceTree = "<group>"; };
+		4BF08312234F574200FED418 /* TStickerGestureDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TStickerGestureDelegate.h; sourceTree = "<group>"; };
 		A9C8D035232B26ED0089971E /* AYRectTransformView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AYRectTransformView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9C8D038232B26ED0089971E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A9C8D039232B26ED0089971E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -107,6 +110,8 @@
 		A9C8D057232B27280089971E /* AYRectTransformView */ = {
 			isa = PBXGroup;
 			children = (
+				4BF08312234F574200FED418 /* TStickerGestureDelegate.h */,
+				4BF08311234F574200FED418 /* TStickerGestureDelegate.m */,
 				A9C8D04F232B27160089971E /* CGGeometry+Rect.h */,
 				A9C8D053232B27160089971E /* CGGeometry+Rect.m */,
 				A9C8D050232B27160089971E /* AYRectTransformControl.h */,
@@ -200,6 +205,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BF08313234F574200FED418 /* TStickerGestureDelegate.m in Sources */,
 				A9C8D061232B94FD0089971E /* AYTransformElementView.m in Sources */,
 				A9C8D056232B27160089971E /* CGGeometry+Rect.m in Sources */,
 				A9C8D064232B97F10089971E /* AYRectView.m in Sources */,
@@ -352,13 +358,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = V6QCEN324A;
+				DEVELOPMENT_TEAM = BY58477G6F;
 				INFOPLIST_FILE = AYRectTransformView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ylcc.AYRectTransformView;
+				PRODUCT_BUNDLE_IDENTIFIER = "-1.ZEBBaseProject111";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -375,7 +381,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ylcc.AYRectTransformView;
+				PRODUCT_BUNDLE_IDENTIFIER = "-1.ZEBBaseProject111";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

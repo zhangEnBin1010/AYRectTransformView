@@ -7,9 +7,22 @@
 
 #import "AYRectTransformControl.h"
 #import "AYGestureControl.h"
+#import "TStickerGestureDelegate.h"
 #import "CGGeometry+Rect.h"
 
 @interface AYRectTransformControl ()<AYGestureControlDelegate, UIGestureRecognizerDelegate>
+/** tap手势 */
+@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+/** pan手势 */
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+/** 捏合手势 */
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
+/** 旋转手势 */
+@property (nonatomic, strong) UIRotationGestureRecognizer *rotationGesture;
+/** 捏合手势 和 旋转手势的代理 */
+@property (nonatomic, strong) TStickerGestureDelegate *stickerGestureDelegate;
+
+
 @end
 @implementation AYRectTransformControl
 {
@@ -69,27 +82,34 @@
 }
 
 - (void)initGestureRecognizer {
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandler:)];
-    tapGesture.delegate = self;
-    [self addGestureRecognizer:tapGesture];
-    
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandler:)];
-    panGesture.maximumNumberOfTouches = 1;
-    panGesture.delegate = self;
-    [self addGestureRecognizer:panGesture];
+        
+    [self addGestureRecognizer:self.tapGesture];
+    [self addGestureRecognizer:self.panGesture];
 }
+
+- (void)addGestureRecognizer {
+    [self addGestureRecognizer:self.pinchGesture];
+    [self addGestureRecognizer:self.rotationGesture];
+}
+
+- (void)removeGestureRecognizer {
+    [self removeGestureRecognizer:self.pinchGesture];
+    [self removeGestureRecognizer:self.rotationGesture];
+}
+
 
 - (void)setRotateRect:(CGRotateRect)rotateRect {
     if (CGRotateRectIsZero(rotateRect)) {
         [self resetRotateRect];
+        [self removeGestureRecognizer];
     }else {
         _hasFocus = YES;
+        [self addGestureRecognizer];
         [self updateControlHidden];
         [self updateLayoutWithRect:rotateRect];
         [self updateStrokeHidden];
     }
 }
-
 - (void)resetRotateRect {
     _hasFocus = NO;
     CGRotateRect rect = CGRotateRectZero;
@@ -116,6 +136,48 @@
 
 - (UIView *)rtDot {
     return _rtControl;
+}
+
+- (UITapGestureRecognizer *)tapGesture {
+    if (!_tapGesture) {
+        _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandler:)];
+        _tapGesture.delegate = self;
+    }
+    return _tapGesture;
+}
+
+- (UIPanGestureRecognizer *)panGesture {
+    if (!_panGesture) {
+        _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandler:)];
+        _panGesture.maximumNumberOfTouches = 1;
+        _panGesture.delegate = self;
+    }
+    return _panGesture;
+}
+
+- (UIPinchGestureRecognizer *)pinchGesture {
+    if (!_pinchGesture) {
+        _pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchHandler:)];
+        _pinchGesture.delegate = self.stickerGestureDelegate;
+    }
+    return _pinchGesture;
+}
+
+- (UIRotationGestureRecognizer *)rotationGesture {
+    if (!_rotationGesture) {
+        _rotationGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotationHandler:)];
+        _rotationGesture.delegate = self.stickerGestureDelegate;
+    }
+    return _rotationGesture;
+}
+
+- (TStickerGestureDelegate *)stickerGestureDelegate {
+    if (!_stickerGestureDelegate) {
+        _stickerGestureDelegate = [[TStickerGestureDelegate alloc] init];
+        _stickerGestureDelegate.pinchGesture = self.pinchGesture;
+        _stickerGestureDelegate.rotationGesture = self.rotationGesture;
+    }
+    return _stickerGestureDelegate;
 }
 
 - (CAShapeLayer *)strokeLayer {
@@ -253,7 +315,10 @@
 }
 
 - (void)gestureControlEnded:(AYGestureControl *)control{
-    if (_trackingControl != control) return;
+    if (_trackingControl != control)  {
+        _trackingControl = nil;
+        return;
+    }
     _trackingControl = nil;
     [self endedTransform];
 }
@@ -340,6 +405,68 @@
             _isPaning = NO;
         } break;
     }
+}
+
+
+- (void)pinchHandler:(UIPinchGestureRecognizer *)sender {
+    
+    if (sender.state == UIGestureRecognizerStateBegan
+        || sender.state == UIGestureRecognizerStateChanged) {
+        
+        _scale *= sender.scale;
+        
+        CGAffineTransform transform = _conControl.transform;
+        transform = CGAffineTransformRotate(transform, 0);
+        transform = CGAffineTransformScale(transform, sender.scale, sender.scale);
+        _conControl.transform = transform;
+        
+        [self updateDotControlCenter];
+        [self transformCallback];
+        [self setNeedsDisplay];
+
+        sender.scale = 1;
+        
+    }
+
+}
+
+- (void)rotationHandler:(UIRotationGestureRecognizer *)sender {
+    
+    if (sender.state == UIGestureRecognizerStateBegan
+            || sender.state == UIGestureRecognizerStateChanged) {
+
+        _radian += sender.rotation;
+        
+        CGAffineTransform transform = _conControl.transform;
+        transform = CGAffineTransformRotate(transform, sender.rotation);
+        transform = CGAffineTransformScale(transform, _scale, _scale);
+        _conControl.transform = transform;
+        
+        [self updateDotControlCenter];
+        [self transformCallback];
+        [self setNeedsDisplay];
+        
+        [sender setRotation:0];
+        
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if (self.panGesture == gestureRecognizer) {
+        CGPoint point = [touch locationInView:self];
+        if (CGRectContainsPoint(_ltControl.bounds, [touch locationInView:_ltControl]) || CGRectContainsPoint(_lbControl.bounds, [touch locationInView:_lbControl]) ||
+            CGRectContainsPoint(_rtControl.bounds, [touch locationInView:_rtControl]) ||
+            CGRectContainsPoint(_rbControl.bounds, [touch locationInView:_rbControl])) {
+            return YES;
+        }
+        if (!_hasFocus || !CGPathRectContainsPoint([self contentPathRect], point)) {
+            [self tapCallbackWithPoint:point];
+        }
+        if (!_hasFocus) {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 #pragma mark -
