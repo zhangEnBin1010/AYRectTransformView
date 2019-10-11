@@ -116,6 +116,7 @@
     [self updateLayoutWithRect:rect];
     [self setDotControlHidden:YES];
     _strokeLayer.hidden = YES;
+    _trackingControl = nil;
 }
 
 - (UIView *)content {
