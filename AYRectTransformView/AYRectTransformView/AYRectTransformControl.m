@@ -411,8 +411,11 @@
 
 - (void)pinchHandler:(UIPinchGestureRecognizer *)sender {
     
-    if (sender.state == UIGestureRecognizerStateBegan
-        || sender.state == UIGestureRecognizerStateChanged) {
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        
+        [self gestureControlBegan:_conControl];
+        
+    }else if (sender.state == UIGestureRecognizerStateChanged) {
         
         _scale *= sender.scale;
         
@@ -427,14 +430,20 @@
 
         sender.scale = 1;
         
+    }else if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        [self gestureControlEnded:_conControl];
     }
 
 }
 
 - (void)rotationHandler:(UIRotationGestureRecognizer *)sender {
     
-    if (sender.state == UIGestureRecognizerStateBegan
-            || sender.state == UIGestureRecognizerStateChanged) {
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        
+        [self gestureControlBegan:_conControl];
+        
+    }else if (sender.state == UIGestureRecognizerStateChanged) {
 
         _radian += sender.rotation;
         
@@ -449,6 +458,9 @@
         
         [sender setRotation:0];
         
+    }else if (sender.state == UIGestureRecognizerStateEnded) {
+       
+        [self gestureControlEnded:_conControl];
     }
 }
 
